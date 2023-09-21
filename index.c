@@ -3,8 +3,6 @@
 #include <string.h>
 #include <time.h>
 
-
-
 // globale variables
 int i, j, nbrTaches, choice;
 int countID = 1, size,start;
@@ -15,8 +13,6 @@ int countID = 1, size,start;
 
 
 // les structures
-
-
 typedef struct Date {
     int jour;
     int mois;
@@ -96,9 +92,6 @@ void sortDeadline(tache task[] ) {
 }
 
 void deadline3Jours(){
-
-
-
 
 }
 
@@ -199,7 +192,7 @@ void searchById(tache task[],int id){
     for (i = 0; i < nbrTaches; i++) {
         if ( task[i].id == id) {
         printf("--------------------------------------------------------------\nId\tTitre\tDesc\t\tdeadline\tStatus\n-----------------------------------------");
-        printf("\n%d\t%s\t%s\t\t%d\t%s\n--------------------------------------------------",task[i].id,task[i].titre,task[i].description, task[i].deadline,task[i].statut);
+        printf("\n%d\t%s\t%s\t\\%d\\%d\\%d\t%s\n--------------------------------------------------------------",task[i].id,task[i].titre,task[i].description, task[i].deadline.an, task[i].deadline.mois, task[i].deadline.jour,task[i].statut);
             found = 1;
             break;
         }
@@ -217,7 +210,7 @@ void searchByTitre(tache task[],char titre[]){
     for (i = 0; i < nbrTaches; i++) {
         if (strcmp(titre, task[i].titre) == 0) {
         printf("--------------------------------------------------------------\nId\tTitre\tDesc\t\tdeadline\tStatus\n-----------------------------------------");
-        printf("\n%d\t%s\t%s\t\t%d\t%s\n--------------------------------------------------",task[i].id,task[i].titre,task[i].description, task[i].deadline,task[i].statut);
+        printf("\n%d\t%s\t%s\t\\%d\\%d\\%d\t%s\n--------------------------------------------------------------",task[i].id,task[i].titre,task[i].description, task[i].deadline.an, task[i].deadline.mois, task[i].deadline.jour,task[i].statut);
             found = 1;
             break;
         }
@@ -488,7 +481,8 @@ int main() {
                         break;
                     case 2:
                         printf("entre le titre du tache que vous voullez trouver : \n");
-                        scanf("%s", titre); // Use %s for string input
+                        getchar();
+                        gets(titre);
                         searchByTitre(task, titre);
                         break;
                     default:
