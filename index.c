@@ -20,11 +20,10 @@ typedef struct Date {
 
 typedef struct tache {
     int id;
-    char titre[20];
+    char titre[30];
     char description[100];
-    int deadline;
-    char statut[20];
-    Date dateN;
+    Date deadline;
+    char statut[30];
     int idCollab[100];
 } tache;
 // menue function
@@ -43,12 +42,11 @@ void menue (){
         printf("0. Quitter\n");
         printf("\n#################################################\n");
 }
-
 // function for display list of tasks
-void displayTasks(tache task[]) {
+void displayTasks(tache *task, int nbrTaches) {
     printf("--------------------------------------------------------------\nId\tTitre\tDesc\t\tdeadline\tStatus\n--------------------------------------------------------------");
     for(i = 0; i < nbrTaches; i++){
-    printf("\n%d\t%s\t%s\t\t%d\t%s\n--------------------------------------------------------------",task[i].id,task[i].titre,task[i].description, task[i].deadline,task[i].statut);
+    printf("\n%d\t%s\t%s\\%d\\%d\\%d\t%s\n--------------------------------------------------------------",task[i].id,task[i].titre,task[i].description, task[i].deadline.an, task[i].deadline.mois, task[i].deadline.jour,task[i].statut);
 
         }
 }
@@ -66,16 +64,25 @@ void sortAlpha (tache task[]){
             }
         }
     }
+    printf("SORTED");
 }
-
 // sort deadline
-
-
-void sortDeadline(tache task[]) {
+void sortDeadline(tache task[] ) {
     tache temp;
     for (i = 0; i < nbrTaches - 1; i++) {
         for (j = 0; j < nbrTaches - i - 1; j++) {
-            if (task[j].deadline > task[j+1].deadline) {
+            if (task[j].deadline.an > task[j + 1].deadline.an) {
+                temp = task[j];
+                task[j] = task[j + 1];
+                task[j + 1] = temp;
+            } else if (task[j].deadline.an == task[j + 1].deadline.an &&
+                       task[j].deadline.mois > task[j + 1].deadline.mois) {
+                temp = task[j];
+                task[j] = task[j + 1];
+                task[j + 1] = temp;
+            } else if (task[j].deadline.an == task[j + 1].deadline.an &&
+                       task[j].deadline.mois == task[j + 1].deadline.mois &&
+                       task[j].deadline.jour > task[j + 1].deadline.jour) {
                 temp = task[j];
                 task[j] = task[j + 1];
                 task[j + 1] = temp;
@@ -83,6 +90,8 @@ void sortDeadline(tache task[]) {
         }
     }
 }
+
+
 // modifier description
 void modifierDesc(tache task[],int id, char desc[]){
     int found = 0;
@@ -114,20 +123,9 @@ void modifierStatus(tache task[],int id, char statu[]){
     }
 
 }
-// update tache
 void modifierDeadline(tache task[],int id, int deadline){
-    int found = 0;
-    for (i = 0; i < nbrTaches; i++) {
-        if ( task[i].id == id) {
-            task[i].deadline = deadline ;
-            found = 1;
-            break;
-        }
-    }
 
-    if (!found) {
-        printf("Aucun tache trouvé pour modifier.\n");
-    }
+
 
 }
 // delete tache
@@ -220,43 +218,48 @@ void nbrTotalCompleteIncomplete(tache task[]){
 }
 
 //Ajouter une nouvelle tâche
-void addTask(tache task[]){
-    printf("saisir le nomber des taches a ajouter : ");
-    scanf("%d",&nbrTaches);
-    for(i = 0; i < nbrTaches; i++){
-        task[i].id = countID;
-        countID +=countID;
-        printf("saisir l intituler de tache (%d) : ", i+1);
+void addTask(tache **task, int *nbrTaches) {
+    printf("saisir le nombre des taches a ajouter : "); // Corrected "nomber" to "nombre"
+    scanf(" %d", nbrTaches); // No need to use & before nbrTaches
+
+    *task = (tache *)malloc((*nbrTaches) * sizeof(tache));
+
+    for(i = 0; i < *nbrTaches; i++){ // Dereference nbrTaches here
+        (*task)[i].id = countID; // Use (*task) to access elements
+        countID += countID; // Not sure why you're doubling countID here
+        printf("saisir l'intitule de la tache (%d) : ", i+1); // Corrected "intituler" to "intitule"
         getchar();
-        gets(task[i].titre);
-        printf("saisir la description de tache (%d) : ", i+1);
+        gets((*task)[i].titre); // Use (*task) to access elements
+        printf("saisir la description de la tache (%d) : ", i+1);
         getchar();
-        gets(task[i].description);
-        printf("Saisir le deadline de la tache (%d) : ", i+1);
-        scanf("%d", &task[i].deadline);
-        printf("saisir l statut de tache (%d) : ", i+1);
+        gets((*task)[i].description); // Use (*task) to access elements
+        printf("Saisir le deadline de la tache (%d) : sous forme (yyyy-mm-dd) ", i+1); // Corrected "form" to "forme"
+        scanf(" %d/%d/%d", &((*task)[i].deadline.an), &((*task)[i].deadline.mois), &((*task)[i].deadline.jour)); // Use (*task) to access elements
+        printf("saisir le statut de la tache (%d) : ", i+1);
         getchar();
-        gets(task[i].statut);
+        gets((*task)[i].statut); // Use (*task) to access elements
         printf("\n------------------------------------------\n");
     }
 }
 
+
 int main() {
-    int choixMod,choixSearch,id,deadline;
-    char desc[100],status[30],titre[30];
-    tache task[nbrTaches];
+    int choixMod, choixSearch, id, deadline, choice = -1; // Initialize choice to -1
+    char desc[100], status[30], titre[30];
+    tache *task = NULL; // Declare task as a pointer
+
     do {
-        menue ();
+        menue();
 
         printf("Entrez votre choix: ");
         scanf("%d", &choice);
 
         switch (choice) {
             case 1:
-                addTask(task);
+                addTask(&task, &nbrTaches); // Pass task and nbrTaches as pointers
                 break;
             case 2:
-                displayTasks(task);
+                displayTasks(task, nbrTaches);
                 break;
             case 3:
                 sortAlpha(task);
@@ -265,68 +268,63 @@ int main() {
                 sortDeadline(task);
                 break;
             case 5:
-
+                // Implement functionality for displaying tasks with deadlines in 3 days or less
                 break;
             case 6:
-                printf("1 => Modifier la description .\n2 => Modifier le statut\n3 => Modifier le deadline.\n");
-                scanf("%d",&choixMod);
+                printf("1 => Modifier la description.\n2 => Modifier le statut\n3 => Modifier le deadline.\n");
+                scanf("%d", &choixMod);
                 switch (choixMod) {
                     case 1:
                         printf("entre ID du tache que vous voullez modifier : \n");
-                        scanf("%d",&id);
+                        scanf("%d", &id);
                         printf("entre la nouvelle description : \n");
-                        scanf("%s",&desc);
+                        scanf("%s", desc);
                         modifierDesc(task, id, desc);
-
                         break;
                     case 2:
                         printf("entre ID du tache que vous voullez modifier : \n");
-                        scanf("%d",&id);
+                        scanf("%d", &id);
                         printf("entre le nouvelle statut  : \n");
-                        scanf("%s",&status);
+                        scanf("%s", status);
                         modifierStatus(task, id, status);
                         break;
                     case 3:
                         printf("entre ID du tache que vous voullez modifier : \n");
-                        scanf("%d",&id);
+                        scanf("%d", &id);
                         printf("entre le nouvelle deadline  : \n");
-                        scanf("%d",&deadline);
+                        scanf("%d", &deadline);
                         modifierDeadline(task, id, deadline);
                         break;
                     default:
                         printf("Choix invalide. Veuillez réessayer.\n");
                 }
                 break;
-            case 7: {
-                    printf("entre ID du tache que vous voullez supprimer : \n");
-                    scanf("%d",&id);
-                    supprimerTask(task, id);
+            case 7:
+                printf("entre ID du tache que vous voullez supprimer : \n");
+                scanf("%d", &id);
+                supprimerTask(task, id);
                 break;
-            }
-            case 8: {
+            case 8:
                 printf("1 => Rechercher par ID.\n2 => Rechercher par Titre.\n");
-                scanf("%d",&choixSearch);
-
+                scanf("%d", &choixSearch);
                 switch (choixSearch) {
                     case 1:
                         printf("entre ID du tache que vous voullez trouver : \n");
-                        scanf("%d",&id);
+                        scanf("%d", &id);
                         searchById(task, id);
-
                         break;
                     case 2:
                         printf("entre le titre du tache que vous voullez trouver : \n");
-                        scanf("%d",titre);
+                        scanf("%s", titre); // Use %s for string input
                         searchByTitre(task, titre);
                         break;
                     default:
                         printf("Choix invalide. Veuillez réessayer.\n");
                 }
                 break;
-            }
-            case 9: {
+            case 9:
                 printf("1 => Afficher le nombre total des taches.\n2 => Afficher le nombre de taches completes et incompletes.\n => Afficher le nombre de jours restants jusqu au delai de chaque tache.");
-                scanf("%d",&choixSearch);
+                scanf("%d", &choixSearch);
                 switch (choixSearch) {
                     case 1:
                         nbrTotal(task);
@@ -335,14 +333,12 @@ int main() {
                         nbrTotalCompleteIncomplete(task);
                         break;
                     case 3:
-                        //nbrTotalCompleteIncomplete(task);
+                        // Implement functionality for displaying the number of days remaining for each task's deadline
                         break;
                     default:
                         printf("Choix invalide. Veuillez réessayer.\n");
                 }
-            }
                 break;
-
             case 0:
                 printf("Au revoir!\n");
                 break;
@@ -350,7 +346,9 @@ int main() {
                 printf("Choix invalide. Veuillez réessayer.\n");
         }
 
-} while (choice != 0);
+    } while (choice != 0);
+
+    free(task); // Free the dynamically allocated memory
 
     return 0;
 }
