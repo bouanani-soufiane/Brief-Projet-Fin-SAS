@@ -242,28 +242,51 @@ void nbrTotalCompleteIncomplete(tache task[]){
 
 //Ajouter une nouvelle tâche
 void addTask(tache **task, int *nbrTaches) {
-    printf("saisir le nombre des taches a ajouter : "); // Corrected "nomber" to "nombre"
-    scanf(" %d", nbrTaches); // No need to use & before nbrTaches
+    int status;
+    printf("Saisir le nombre de taches a ajouter : ");
+    scanf(" %d", nbrTaches);
 
     *task = (tache *)malloc((*nbrTaches) * sizeof(tache));
 
-    for(i = 0; i < *nbrTaches; i++){ // Dereference nbrTaches here
-        (*task)[i].id = countID; // Use (*task) to access elements
-        countID ++; // Not sure why you're doubling countID here
-        printf("saisir l'intitule de la tache (%d) : ", i+1); // Corrected "intituler" to "intitule"
+    for (int i = 0; i < *nbrTaches; i++) {
+        (*task)[i].id = countID;
+        countID++;
+        printf("Saisir l'intitule de la tache (%d) : ", i + 1);
         getchar();
-        gets((*task)[i].titre); // Use (*task) to access elements
-        printf("saisir la description de la tache (%d) : ", i+1);
+        gets((*task)[i].titre);
+        printf("Saisir la description de la tache (%d) : ", i + 1);
         getchar();
-        gets((*task)[i].description); // Use (*task) to access elements
-        printf("Saisir le deadline de la tache (%d) : sous forme (yyyy-mm-dd) ", i+1); // Corrected "form" to "forme"
-        scanf(" %d/%d/%d", &((*task)[i].deadline.an), &((*task)[i].deadline.mois), &((*task)[i].deadline.jour)); // Use (*task) to access elements
-        printf("saisir le statut de la tache (%d) : ", i+1);
-        getchar();
-        gets((*task)[i].statut); // Use (*task) to access elements
+        gets((*task)[i].description);
+        printf("Saisir le deadline de la tache (%d) : sous forme (yyyy-mm-dd) ", i + 1);
+        scanf(" %d/%d/%d", &((*task)[i].deadline.an), &((*task)[i].deadline.mois), &((*task)[i].deadline.jour));
+        printf("Saisir le statut de la tache (%d)  : \n[1] : To Do\n[2] : Doing\n[3] : Done\n", i + 1);
+        scanf("%d", &status);
+        switch (status) {
+            case 1:
+                strcpy((*task)[i].statut, "todo");
+                break;
+            case 2:
+                strcpy((*task)[i].statut, "doing");
+                break;
+            case 3:
+                strcpy((*task)[i].statut, "done");
+                break;
+            default:
+                printf("Choix invalide\n");
+                break;
+        }
+        if(status == 1){
+            printf("added as To Do !");
+        }else if (status == 2){
+            printf("added as Doing");
+        }else if(status == 3){
+            printf("added as Done !");
+        }
+
         printf("\n------------------------------------------\n");
     }
 }
+
 
 
 int main() {
