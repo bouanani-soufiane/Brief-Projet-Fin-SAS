@@ -16,8 +16,6 @@ void initTodayDate() {
     today = *localtime(&t); // Convert to struct tm
 }
 
-
-
 // les structures
 typedef struct Date {
     int jour;
@@ -50,11 +48,14 @@ void menue (){
 }
 // function for display list of tasks
 void displayTasks(tache *task, int nbrTaches) {
-    printf("--------------------------------------------------------------\nId\tTitre\tDesc\t\tdeadline\tStatus\n--------------------------------------------------------------");
-    for(i = 0; i < nbrTaches; i++){
-    printf("\n%d\t%s\t%s\t\\%d\\%d\\%d\t%s\n--------------------------------------------------------------",task[i].id,task[i].titre,task[i].description, task[i].deadline.an, task[i].deadline.mois, task[i].deadline.jour,task[i].statut);
-
+    if (nbrTaches < 1 ){
+        printf("there is no tasks to display");
+    }else{
+        printf("--------------------------------------------------------------\nId\tTitre\tDesc\t\tdeadline\tStatus\n--------------------------------------------------------------");
+        for(i = 0; i < nbrTaches; i++){
+            printf("\n%d\t%s\t%s\t\\%d\\%d\\%d\t%s\n--------------------------------------------------------------",task[i].id,task[i].titre,task[i].description, task[i].deadline.an, task[i].deadline.mois, task[i].deadline.jour,task[i].statut);
         }
+    }
 }
 // sort alpha
 void sortAlpha (tache task[]){
@@ -210,7 +211,7 @@ void supprimerTask(tache task[],int id){
     }
 
     if (!found) {
-        printf("Aucun apprenant trouvé pour supprimer.\n");
+        printf("Aucun tache trouve pour supprimer.\n");
     }
 
 }
@@ -228,7 +229,7 @@ void searchById(tache task[],int id){
     }
 
     if (!found) {
-        printf("Aucun apprenant trouvé pour supprimer.\n");
+        printf("Aucun tache trouve.\n");
     }
 
 }
@@ -246,7 +247,7 @@ void searchByTitre(tache task[],char titre[]){
     }
 
     if (!found) {
-        printf("Aucun apprenant trouvé pour supprimer.\n");
+        printf("Aucun tache trouve.\n");
     }
 
 }
@@ -283,7 +284,6 @@ void nbrTotalCompleteIncomplete(tache task[]){
 
 }
 
-
 int daysRemaining(Date deadline) {
     time_t now;
     struct tm *tm_info;
@@ -304,11 +304,32 @@ int daysRemaining(Date deadline) {
 }
 // Function to display the number of days remaining for each task
 void displayDaysRemaining(tache *task, int nbrTaches) {
-    printf("--------------------------------------------------------------\nId\tTitre\tDays Remaining\n--------------------------------------------------------------");
+     time_t now;
+    struct tm *tm_info;
+    time(&now);
+    tm_info = localtime(&now);
 
-    for (int i = 0; i < nbrTaches; i++) {
-        int remainingDays = daysRemaining(task[i].deadline);
-        printf("\n%d\t%s\t%d\n--------------------------------------------------------------", task[i].id, task[i].titre, remainingDays);
+    // Get the current date
+    int currentYear = tm_info->tm_year + 1900;
+    int currentMonth = tm_info->tm_mon + 1;
+    int currentDay = tm_info->tm_mday;
+    if(nbrTaches < 1){
+        printf("there is no task to dispaly");
+    }else{
+        printf("--------------------------------------------------------------\nId\tTitre\tToday's Date\tDeadline\tDays Remaining\n--------------------------------------------------------------");
+        for (int i = 0; i < nbrTaches; i++) {
+            Date todayDate;
+            todayDate.an = currentYear;
+            todayDate.mois = currentMonth;
+            todayDate.jour = currentDay;
+
+            printf("\n%d\t%s\t%d/%d/%d\t%d/%d/%d\t%d\n--------------------------------------------------------------",
+                task[i].id, task[i].titre,
+                todayDate.jour, todayDate.mois, todayDate.an, // Today's Date
+                task[i].deadline.jour, task[i].deadline.mois, task[i].deadline.an, // Deadline
+                daysRemaining(task[i].deadline)
+            );
+        }
     }
 }
 
@@ -332,8 +353,21 @@ void addOneTask(tache **task, int *nbrTaches) {
     printf("Saisir la description de la tache : ");
     gets((*task)[i].description);
 
-    printf("Saisir le deadline de la tache (sous forme yyyy-mm-dd) : ");
-    scanf(" %d/%d/%d", &((*task)[i].deadline.an), &((*task)[i].deadline.mois), &((*task)[i].deadline.jour));
+    do
+    {
+        printf("Saisir le deadline de la tache (sous forme yyyy/mm/dd) : ");
+        scanf(" %d/%d/%d", &((*task)[i].deadline.an), &((*task)[i].deadline.mois), &((*task)[i].deadline.jour));
+        if ((*task)[i].deadline.an < 1990 ||
+        (*task)[i].deadline.mois < 1 || (*task)[i].deadline.mois > 12 ||
+        (*task)[i].deadline.jour < 1 || (*task)[i].deadline.jour > 31) {
+            printf("Erreur de saisie. Veuillez entrer une date valide (yyyy/mm/dd).\n");
+        }
+
+
+    } while ((*task)[i].deadline.an < 1990 ||
+         (*task)[i].deadline.mois < 1 || (*task)[i].deadline.mois > 12 ||
+         (*task)[i].deadline.jour < 1 || (*task)[i].deadline.jour > 31);
+
 
     printf("Saisir le statut de la tache : \n[1] : To Do\n[2] : Doing\n[3] : Done\n");
     scanf("%d", &status);
@@ -367,9 +401,6 @@ void addOneTask(tache **task, int *nbrTaches) {
     start = countID;
 }
 
-
-
-
 //Ajouter multi tâche
 void addTask(tache **task, int *nbrTaches) {
     int status;
@@ -388,8 +419,17 @@ void addTask(tache **task, int *nbrTaches) {
         gets((*task)[i].titre);
         printf("Saisir la description de la tache (%d) : ", i + 1);
         gets((*task)[i].description);
-        printf("Saisir le deadline de la tache (%d) : sous forme (yyyy-mm-dd) ", i + 1);
-        scanf(" %d/%d/%d", &((*task)[i].deadline.an), &((*task)[i].deadline.mois), &((*task)[i].deadline.jour));
+        do{
+            printf("Saisir le deadline de la tache (sous forme yyyy/mm/dd) : ");
+            scanf(" %d/%d/%d", &((*task)[i].deadline.an), &((*task)[i].deadline.mois), &((*task)[i].deadline.jour));
+            if ((*task)[i].deadline.an < 1990 ||
+            (*task)[i].deadline.mois < 1 || (*task)[i].deadline.mois > 12 ||
+            (*task)[i].deadline.jour < 1 || (*task)[i].deadline.jour > 31) {
+                printf("Erreur de saisie. Veuillez entrer une date valide (yyyy/mm/dd).\n");
+            }
+        } while ((*task)[i].deadline.an < 1990 ||
+                (*task)[i].deadline.mois < 1 || (*task)[i].deadline.mois > 12 ||
+                (*task)[i].deadline.jour < 1 || (*task)[i].deadline.jour > 31 );
         printf("Saisir le statut de la tache (%d)  : \n[1] : To Do\n[2] : Doing\n[3] : Done\n", i + 1);
         scanf("%d", &status);
         switch (status) {
@@ -420,8 +460,6 @@ void addTask(tache **task, int *nbrTaches) {
     *nbrTaches += numTasksToAdd;
     start = countID;
 }
-
-
 
 int main() {
     int choixMod, choixSearch, id, deadline, modifStatus,taskToAdd , choice = -1; // Initialize choice to -1
@@ -463,29 +501,40 @@ int main() {
                 sortDeadline(task);
                 break;
             case 5:
-                initTodayDate(); // Initialize today's date
-                deadline3Jours(task, nbrTaches); // Display tasks with deadlines within 3 days
+                if(nbrTaches < 1){
+                    printf("there is no tasks to display");
+                }else{
+                    initTodayDate(); // Initialize today's date
+                    deadline3Jours(task, nbrTaches); // Display tasks with deadlines within 3 days
+                }
                 break;
             case 6:
                 printf("1 => Modifier la description.\n2 => Modifier le statut\n3 => Modifier le deadline.\n");
                 scanf("%d", &choixMod);
                 switch (choixMod) {
                     case 1:
-                        printf("entre ID du tache que vous voullez modifier : \n");
-                        scanf("%d", &id);
-                        printf("voullez vous vraiment modifier description de la tache ID [%d] (O/N) : \n", id);
-                        scanf(" %c", &suppId);
-                        if(suppId == 'O' || suppId == 'o'){
-                            printf("entre la nouvelle description : \n");
-                            getchar();
-                            gets(desc);
-                            modifierDesc(task, id, desc);
+                        if (nbrTaches < 1){
+                            printf("there no task to update");
                         }else{
-                            printf("modification annulee !! \n");
-                        }
+                            printf("entre ID du tache que vous voullez modifier : \n");
+                            scanf("%d", &id);
+                            printf("voullez vous vraiment modifier description de la tache ID [%d] (O/N) : \n", id);
+                            scanf(" %c", &suppId);
+                            if(suppId == 'O' || suppId == 'o'){
+                                printf("entre la nouvelle description : \n");
+                                getchar();
+                                gets(desc);
+                                modifierDesc(task, id, desc);
+                            }else{
+                                printf("modification annulee !! \n");
+                            }
 
-                        break;
+                            break;
+                        }
                     case 2:
+                        if (nbrTaches < 1){
+                            printf("there no task to update");
+                        }else{
                         printf("entre ID du tache que vous voullez modifier : \n");
                         scanf("%d", &id);
                         printf("voullez vous vraiment modifier statut de la tache ID [%d] (O/N) : \n", id);
@@ -499,23 +548,34 @@ int main() {
                         }
 
                         break;
-                      case 3:
-                        printf("entre ID du tache que vous voullez modifier : \n");
-                        scanf("%d", &id);
-                        printf("voullez vous vraiment modifier deadline de la tache ID [%d] (O/N) : \n", id);
-                        scanf(" %c", &suppId);
-                        if(suppId == 'O' || suppId == 'o'){
-                            printf("Entre la nouvelle deadline (sous forme yyyy/mm/dd) : \n");
-                            Date newDeadline;
-                            scanf("%d/%d/%d", &newDeadline.an, &newDeadline.mois, &newDeadline.jour);
-                            modifierDeadline(task, id, newDeadline);
-                        }else{
-                            printf("modification annulee !! \n");
                         }
-
+                    case 3:
+                    if (nbrTaches < 1){
+                        printf("there no task to update");
+                    }else{
+                        printf("Entrez l'ID de la tâche que vous voulez modifier : \n");
+                        scanf("%d", &id);
+                        printf("Voulez-vous vraiment modifier la deadline de la tâche ID [%d] (O/N) : \n", id);
+                        scanf(" %c", &suppId);
+                        if (suppId == 'O' || suppId == 'o') {
+                            Date newDeadline;
+                            do {
+                                printf("Saisir la nouvelle deadline de la tache (sous forme yyyy/mm/dd) : ");
+                                scanf("%d/%d/%d", &newDeadline.an, &newDeadline.mois, &newDeadline.jour);
+                                if (newDeadline.an < 1990 ||
+                                    newDeadline.mois < 1 || newDeadline.mois > 12 ||
+                                    newDeadline.jour < 1 || newDeadline.jour > 31) {
+                                    printf("Erreur de saisie. Veuillez entrer une date valide (yyyy/mm/dd).\n");
+                                }
+                            } while (newDeadline.an < 1990 ||
+                                    newDeadline.mois < 1 || newDeadline.mois > 12 ||
+                                    newDeadline.jour < 1 || newDeadline.jour > 31);
+                        modifierDeadline(task, id, newDeadline);
+                        } else {
+                            printf("Modification annulée !! \n");
+                        }
                         break;
-                    default:
-                        printf("Choix invalide. Veuillez réessayer.\n");
+                    }
                 }
                 break;
             case 7:
