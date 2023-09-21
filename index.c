@@ -9,6 +9,11 @@
 int i, j, nbrTaches, choice;
 int countID = 1;
 
+// local time
+
+
+
+
 // les structures
 
 
@@ -90,9 +95,12 @@ void sortDeadline(tache task[] ) {
     }
 }
 
+void deadline3Jours(){
 
 
 
+
+}
 
 // modifier description
 void modifierDesc(tache task[],int id, char desc[]){
@@ -296,7 +304,8 @@ int main() {
                         scanf(" %c", &suppId);
                         if(suppId == 'O' || suppId == 'o'){
                             printf("entre la nouvelle description : \n");
-                            scanf("%s", desc);
+                            getchar();
+                            gets(desc);
                             modifierDesc(task, id, desc);                        
                         }else{
                             printf("modification annulee !! \n");
@@ -310,7 +319,8 @@ int main() {
                         scanf(" %c", &suppId);
                         if(suppId == 'O' || suppId == 'o'){
                             printf("entre le nouvelle statut  : \n");
-                            scanf("%s", status);
+                            getchar();
+                            gets(status);
                             modifierStatus(task, id, status);                        
                         }else{
                             printf("modification annulee !! \n");
