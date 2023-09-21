@@ -28,25 +28,24 @@ typedef struct tache {
 } tache;
 // menue function
 void menue (){
-        printf("\n#################################################\n");
-        printf("\nMenu:\n");
-        printf("1. Ajouter une nouvelle tache\n");
-        printf("2. Afficher la liste de toutes les taches\n");
-        printf("3. Trier les taches par ordre alphabetique\n");
-        printf("4. Trier les taches par deadline\n");
-        printf("5. Afficher les taches dont le deadline est dans 3 jours ou moins\n");
-        printf("6. Modifier une tache\n");
-        printf("7. Supprimer une tache par identifiant\n");
-        printf("8. Rechercher les Taches\n");
-        printf("9. Afficher les statistiques\n");
-        printf("0. Quitter\n");
-        printf("\n#################################################\n");
+        printf("\n\t\t\t\t#################################################\n");
+        printf("\t\t\t\t1. Ajouter une nouvelle tache\n");
+        printf("\t\t\t\t2. Afficher la liste de toutes les taches\n");
+        printf("\t\t\t\t3. Trier les taches par ordre alphabetique\n");
+        printf("\t\t\t\t4. Trier les taches par deadline\n");
+        printf("\t\t\t\t5. Afficher les taches dont le deadline est dans 3 jours ou moins\n");
+        printf("\t\t\t\t6. Modifier une tache\n");
+        printf("\t\t\t\t7. Supprimer une tache par identifiant\n");
+        printf("\t\t\t\t8. Rechercher les Taches\n");
+        printf("\t\t\t\t9. Afficher les statistiques\n");
+        printf("\t\t\t\t0. Quitter\n");
+        printf("\n\t\t\t\t#################################################\n");
 }
 // function for display list of tasks
 void displayTasks(tache *task, int nbrTaches) {
     printf("--------------------------------------------------------------\nId\tTitre\tDesc\t\tdeadline\tStatus\n--------------------------------------------------------------");
     for(i = 0; i < nbrTaches; i++){
-    printf("\n%d\t%s\t%s\\%d\\%d\\%d\t%s\n--------------------------------------------------------------",task[i].id,task[i].titre,task[i].description, task[i].deadline.an, task[i].deadline.mois, task[i].deadline.jour,task[i].statut);
+    printf("\n%d\t%s\t%s\t\\%d\\%d\\%d\t%s\n--------------------------------------------------------------",task[i].id,task[i].titre,task[i].description, task[i].deadline.an, task[i].deadline.mois, task[i].deadline.jour,task[i].statut);
 
         }
 }
@@ -92,6 +91,9 @@ void sortDeadline(tache task[] ) {
 }
 
 
+
+
+
 // modifier description
 void modifierDesc(tache task[],int id, char desc[]){
     int found = 0;
@@ -123,11 +125,24 @@ void modifierStatus(tache task[],int id, char statu[]){
     }
 
 }
-void modifierDeadline(tache task[],int id, int deadline){
 
 
+void modifierDeadline(tache task[], int id, Date newDeadline) {
+    int found = 0;
 
+    for (int i = 0; i < nbrTaches; i++) {
+        if (task[i].id == id) {
+            task[i].deadline = newDeadline;
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("Aucun tache trouvé pour modifier la deadline.\n");
+    }
 }
+
 // delete tache
 void supprimerTask(tache task[],int id){
     int found = 0;
@@ -226,7 +241,7 @@ void addTask(tache **task, int *nbrTaches) {
 
     for(i = 0; i < *nbrTaches; i++){ // Dereference nbrTaches here
         (*task)[i].id = countID; // Use (*task) to access elements
-        countID += countID; // Not sure why you're doubling countID here
+        countID ++; // Not sure why you're doubling countID here
         printf("saisir l'intitule de la tache (%d) : ", i+1); // Corrected "intituler" to "intitule"
         getchar();
         gets((*task)[i].titre); // Use (*task) to access elements
@@ -245,7 +260,7 @@ void addTask(tache **task, int *nbrTaches) {
 
 int main() {
     int choixMod, choixSearch, id, deadline, choice = -1; // Initialize choice to -1
-    char desc[100], status[30], titre[30];
+    char desc[100], status[30], titre[30], suppId;
     tache *task = NULL; // Declare task as a pointer
 
     do {
@@ -277,23 +292,45 @@ int main() {
                     case 1:
                         printf("entre ID du tache que vous voullez modifier : \n");
                         scanf("%d", &id);
-                        printf("entre la nouvelle description : \n");
-                        scanf("%s", desc);
-                        modifierDesc(task, id, desc);
+                        printf("voullez vous vraiment modifier description de la tache ID [%d] (O/N) : \n", id);
+                        scanf(" %c", &suppId);
+                        if(suppId == 'O' || suppId == 'o'){
+                            printf("entre la nouvelle description : \n");
+                            scanf("%s", desc);
+                            modifierDesc(task, id, desc);                        
+                        }else{
+                            printf("modification annulee !! \n");
+                        }
+                       
                         break;
                     case 2:
                         printf("entre ID du tache que vous voullez modifier : \n");
                         scanf("%d", &id);
-                        printf("entre le nouvelle statut  : \n");
-                        scanf("%s", status);
-                        modifierStatus(task, id, status);
+                        printf("voullez vous vraiment modifier statut de la tache ID [%d] (O/N) : \n", id);
+                        scanf(" %c", &suppId);
+                        if(suppId == 'O' || suppId == 'o'){
+                            printf("entre le nouvelle statut  : \n");
+                            scanf("%s", status);
+                            modifierStatus(task, id, status);                        
+                        }else{
+                            printf("modification annulee !! \n");
+                        }
+                        
                         break;
-                    case 3:
+                      case 3:
                         printf("entre ID du tache que vous voullez modifier : \n");
                         scanf("%d", &id);
-                        printf("entre le nouvelle deadline  : \n");
-                        scanf("%d", &deadline);
-                        modifierDeadline(task, id, deadline);
+                        printf("voullez vous vraiment modifier deadline de la tache ID [%d] (O/N) : \n", id);
+                        scanf(" %c", &suppId);
+                        if(suppId == 'O' || suppId == 'o'){
+                            printf("Entre la nouvelle deadline (sous forme yyyy/mm/dd) : \n");
+                            Date newDeadline;
+                            scanf("%d/%d/%d", &newDeadline.an, &newDeadline.mois, &newDeadline.jour);
+                            modifierDeadline(task, id, newDeadline);                       
+                        }else{
+                            printf("modification annulee !! \n");
+                        }
+                      
                         break;
                     default:
                         printf("Choix invalide. Veuillez réessayer.\n");
@@ -302,7 +339,14 @@ int main() {
             case 7:
                 printf("entre ID du tache que vous voullez supprimer : \n");
                 scanf("%d", &id);
-                supprimerTask(task, id);
+                printf("voullez vous vraiment supprimer la tache ID [%d] (O/N) : \n", id);
+                scanf(" %c", &suppId);
+                if(suppId == 'O' || suppId == 'o'){
+                    supprimerTask(task, id);
+                }else{
+                    printf("suppression annulee !! \n");
+                }
+                
                 break;
             case 8:
                 printf("1 => Rechercher par ID.\n2 => Rechercher par Titre.\n");
@@ -323,7 +367,7 @@ int main() {
                 }
                 break;
             case 9:
-                printf("1 => Afficher le nombre total des taches.\n2 => Afficher le nombre de taches completes et incompletes.\n => Afficher le nombre de jours restants jusqu au delai de chaque tache.");
+                printf("1 => Afficher le nombre total des taches.\n2 => Afficher le nombre de taches completes et incompletes.\n3 => Afficher le nombre de jours restants jusqu au delai de chaque tache.\n");
                 scanf("%d", &choixSearch);
                 switch (choixSearch) {
                     case 1:
