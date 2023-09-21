@@ -7,7 +7,7 @@
 
 // globale variables
 int i, j, nbrTaches, choice;
-int countID = 1;
+int countID = 1, size,start;
 
 // local time
 
@@ -262,21 +262,79 @@ void nbrTotalCompleteIncomplete(tache task[]){
 }
 
 //Ajouter une nouvelle tâche
+
+void addOneTask(tache **task, int *nbrTaches) {
+    int status;
+
+    // Reallocate memory for one additional task
+    *task = (tache *)realloc(*task, (*nbrTaches + 1) * sizeof(tache));
+
+    int i = *nbrTaches; // Index for the new task
+    (*task)[i].id = countID;
+    countID++;
+
+    printf("Saisir l'intitule de la tache : ");
+    getchar();
+    gets((*task)[i].titre);
+
+    printf("Saisir la description de la tache : ");
+    gets((*task)[i].description);
+
+    printf("Saisir le deadline de la tache (sous forme yyyy-mm-dd) : ");
+    scanf(" %d/%d/%d", &((*task)[i].deadline.an), &((*task)[i].deadline.mois), &((*task)[i].deadline.jour));
+
+    printf("Saisir le statut de la tache : \n[1] : To Do\n[2] : Doing\n[3] : Done\n");
+    scanf("%d", &status);
+
+    switch (status) {
+        case 1:
+            strcpy((*task)[i].statut, "todo");
+            break;
+        case 2:
+            strcpy((*task)[i].statut, "doing");
+            break;
+        case 3:
+            strcpy((*task)[i].statut, "done");
+            break;
+        default:
+            printf("Choix invalide\n");
+            break;
+    }
+
+    if (status == 1) {
+        printf("added as To Do !");
+    } else if (status == 2) {
+        printf("added as Doing");
+    } else if (status == 3) {
+        printf("added as Done !");
+    }
+
+    printf("\n------------------------------------------\n");
+
+    (*nbrTaches)++; // Update the total number of tasks
+    start = countID;
+}
+
+
+
+
+//Ajouter multi tâche
 void addTask(tache **task, int *nbrTaches) {
     int status;
+    int numTasksToAdd; // Declare a variable to store the number of tasks to add
     printf("Saisir le nombre de taches a ajouter : ");
-    scanf(" %d", nbrTaches);
+    scanf("%d", &numTasksToAdd); // Read the number of tasks to add
 
-    *task = (tache *)malloc((*nbrTaches) * sizeof(tache));
+    // Reallocate memory for the tasks
+    *task = (tache *)realloc(*task, (*nbrTaches + numTasksToAdd) * sizeof(tache));
 
-    for (int i = 0; i < *nbrTaches; i++) {
+    for (int i = *nbrTaches; i < *nbrTaches + numTasksToAdd; i++) {
         (*task)[i].id = countID;
         countID++;
         printf("Saisir l'intitule de la tache (%d) : ", i + 1);
         getchar();
         gets((*task)[i].titre);
         printf("Saisir la description de la tache (%d) : ", i + 1);
-        getchar();
         gets((*task)[i].description);
         printf("Saisir le deadline de la tache (%d) : sous forme (yyyy-mm-dd) ", i + 1);
         scanf(" %d/%d/%d", &((*task)[i].deadline.an), &((*task)[i].deadline.mois), &((*task)[i].deadline.jour));
@@ -296,22 +354,25 @@ void addTask(tache **task, int *nbrTaches) {
                 printf("Choix invalide\n");
                 break;
         }
-        if(status == 1){
+        if (status == 1) {
             printf("added as To Do !");
-        }else if (status == 2){
+        } else if (status == 2) {
             printf("added as Doing");
-        }else if(status == 3){
+        } else if (status == 3) {
             printf("added as Done !");
         }
 
         printf("\n------------------------------------------\n");
     }
+
+    *nbrTaches += numTasksToAdd;
+    start = countID;
 }
 
 
 
 int main() {
-    int choixMod, choixSearch, id, deadline, modifStatus , choice = -1; // Initialize choice to -1
+    int choixMod, choixSearch, id, deadline, modifStatus,taskToAdd , choice = -1; // Initialize choice to -1
     char desc[100], status[30], titre[30], suppId;
     tache *task = NULL; // Declare task as a pointer
 
@@ -323,7 +384,22 @@ int main() {
 
         switch (choice) {
             case 1:
-                addTask(&task, &nbrTaches); // Pass task and nbrTaches as pointers
+                printf("\n[1] : pour une seul tache!\n[2] : pour plusieur taches !\n");
+                scanf("%d",&taskToAdd);
+                switch (taskToAdd)
+                {
+                case 1:
+                    addOneTask(&task, &nbrTaches);
+                    break;
+                case 2:
+
+                    addTask(&task, &nbrTaches); // Pass task and nbrTaches as pointers
+
+                    break;
+
+                default:
+                    break;
+                }
                 break;
             case 2:
                 displayTasks(task, nbrTaches);
