@@ -117,21 +117,42 @@ void modifierDesc(tache task[],int id, char desc[]){
     }
 
 }
-// update tache
-void modifierStatus(tache task[],int id, char statu[]){
+// modifier status
+void modifierStatus(tache task[], int id, int status) {
     int found = 0;
+
     for (i = 0; i < nbrTaches; i++) {
-        if ( task[i].id == id) {
-            strcpy(task[i].statut, statu);
+        if (task[i].id == id) {
+            switch (status) {
+                case 1:
+                    strcpy(task[i].statut, "todo");
+                    break;
+                case 2:
+                    strcpy(task[i].statut, "doing");
+                    break;
+                case 3:
+                    strcpy(task[i].statut, "done");
+                    break;
+                default:
+                    printf("Choix invalide\n");
+                    break;
+            }
+
             found = 1;
-            break;
+
+            if (status == 1) {
+                printf("modified to To Do !");
+            } else if (status == 2) {
+                printf("modified to Doing");
+            } else if (status == 3) {
+                printf("modified to Done !");
+            }
         }
     }
 
     if (!found) {
-        printf("Aucun tache trouvé pour modifier.\n");
+        printf("Aucune tâche trouvée pour modifier.\n");
     }
-
 }
 
 
@@ -290,7 +311,7 @@ void addTask(tache **task, int *nbrTaches) {
 
 
 int main() {
-    int choixMod, choixSearch, id, deadline, choice = -1; // Initialize choice to -1
+    int choixMod, choixSearch, id, deadline, modifStatus , choice = -1; // Initialize choice to -1
     char desc[100], status[30], titre[30], suppId;
     tache *task = NULL; // Declare task as a pointer
 
@@ -329,11 +350,11 @@ int main() {
                             printf("entre la nouvelle description : \n");
                             getchar();
                             gets(desc);
-                            modifierDesc(task, id, desc);                        
+                            modifierDesc(task, id, desc);
                         }else{
                             printf("modification annulee !! \n");
                         }
-                       
+
                         break;
                     case 2:
                         printf("entre ID du tache que vous voullez modifier : \n");
@@ -341,14 +362,13 @@ int main() {
                         printf("voullez vous vraiment modifier statut de la tache ID [%d] (O/N) : \n", id);
                         scanf(" %c", &suppId);
                         if(suppId == 'O' || suppId == 'o'){
-                            printf("entre le nouvelle statut  : \n");
-                            getchar();
-                            gets(status);
-                            modifierStatus(task, id, status);                        
+                            printf("choisi le statut de la tache  : \n[1] : To Do\n[2] : Doing\n[3] : Done\n");
+                            scanf("%d", &modifStatus);
+                            modifierStatus(task, id, modifStatus);
                         }else{
                             printf("modification annulee !! \n");
                         }
-                        
+
                         break;
                       case 3:
                         printf("entre ID du tache que vous voullez modifier : \n");
@@ -359,11 +379,11 @@ int main() {
                             printf("Entre la nouvelle deadline (sous forme yyyy/mm/dd) : \n");
                             Date newDeadline;
                             scanf("%d/%d/%d", &newDeadline.an, &newDeadline.mois, &newDeadline.jour);
-                            modifierDeadline(task, id, newDeadline);                       
+                            modifierDeadline(task, id, newDeadline);
                         }else{
                             printf("modification annulee !! \n");
                         }
-                      
+
                         break;
                     default:
                         printf("Choix invalide. Veuillez réessayer.\n");
@@ -379,7 +399,7 @@ int main() {
                 }else{
                     printf("suppression annulee !! \n");
                 }
-                
+
                 break;
             case 8:
                 printf("1 => Rechercher par ID.\n2 => Rechercher par Titre.\n");
