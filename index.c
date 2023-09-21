@@ -9,6 +9,12 @@ int countID = 1, size,start;
 
 // local time
 
+struct tm today; // Global variable to store today's date
+void initTodayDate() {
+    time_t t;
+    time(&t); // Get current time
+    today = *localtime(&t); // Convert to struct tm
+}
 
 
 
@@ -90,10 +96,33 @@ void sortDeadline(tache task[] ) {
         }
     }
 }
+//Afficher les tâches dont le deadline est dans 3 jours ou moins.
+void deadline3Jours(tache task[], int nbrTaches) {
+    printf("--------------------------------------------------------------\nId\tTitre\tDesc\t\tdeadline\tStatus\n--------------------------------------------------------------");
 
-void deadline3Jours(){
+    struct tm deadlineDate;
 
+    for (i = 0; i < nbrTaches; i++) {
+        // Convert the task's deadline to a struct tm
+        deadlineDate.tm_year = task[i].deadline.an - 1900; // Adjust year
+        deadlineDate.tm_mon = task[i].deadline.mois - 1;   // Adjust month
+        deadlineDate.tm_mday = task[i].deadline.jour;
+        deadlineDate.tm_hour = 0;
+        deadlineDate.tm_min = 0;
+        deadlineDate.tm_sec = 0;
+
+        // Calculate the time difference in seconds
+        time_t currentTime = mktime(&today);
+        time_t taskDeadline = mktime(&deadlineDate);
+        double diffInSeconds = difftime(taskDeadline, currentTime);
+
+        // Check if the deadline is within 3 days (259200 seconds)
+        if (diffInSeconds >= 0 && diffInSeconds <= 259200) {
+            printf("\n%d\t%s\t%s\t%d/%d/%d\t%s\n--------------------------------------------------------------", task[i].id, task[i].titre, task[i].description, task[i].deadline.an, task[i].deadline.mois, task[i].deadline.jour, task[i].statut);
+        }
+    }
 }
+
 
 // modifier description
 void modifierDesc(tache task[],int id, char desc[]){
@@ -254,6 +283,36 @@ void nbrTotalCompleteIncomplete(tache task[]){
 
 }
 
+
+int daysRemaining(Date deadline) {
+    time_t now;
+    struct tm *tm_info;
+    time(&now);
+    tm_info = localtime(&now);
+
+    // Get the current date
+    int currentYear = tm_info->tm_year + 1900;
+    int currentMonth = tm_info->tm_mon + 1;
+    int currentDay = tm_info->tm_mday;
+
+    // Calculate the difference between the deadline and current date
+    int remainingDays = (deadline.an - currentYear) * 365 +
+                        (deadline.mois - currentMonth) * 30 +
+                        (deadline.jour - currentDay);
+
+    return remainingDays;
+}
+// Function to display the number of days remaining for each task
+void displayDaysRemaining(tache *task, int nbrTaches) {
+    printf("--------------------------------------------------------------\nId\tTitre\tDays Remaining\n--------------------------------------------------------------");
+
+    for (int i = 0; i < nbrTaches; i++) {
+        int remainingDays = daysRemaining(task[i].deadline);
+        printf("\n%d\t%s\t%d\n--------------------------------------------------------------", task[i].id, task[i].titre, remainingDays);
+    }
+}
+
+
 //Ajouter une nouvelle tâche
 
 void addOneTask(tache **task, int *nbrTaches) {
@@ -404,7 +463,8 @@ int main() {
                 sortDeadline(task);
                 break;
             case 5:
-                // Implement functionality for displaying tasks with deadlines in 3 days or less
+                initTodayDate(); // Initialize today's date
+                deadline3Jours(task, nbrTaches); // Display tasks with deadlines within 3 days
                 break;
             case 6:
                 printf("1 => Modifier la description.\n2 => Modifier le statut\n3 => Modifier le deadline.\n");
@@ -500,7 +560,7 @@ int main() {
                         nbrTotalCompleteIncomplete(task);
                         break;
                     case 3:
-                        // Implement functionality for displaying the number of days remaining for each task's deadline
+                        displayDaysRemaining(task, nbrTaches);
                         break;
                     default:
                         printf("Choix invalide. Veuillez réessayer.\n");
