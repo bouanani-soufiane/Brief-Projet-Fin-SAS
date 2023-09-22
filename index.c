@@ -109,9 +109,9 @@ void deadline3Jours(tache task[], int nbrTaches) {
     if(nbrTaches < 1){
         printf("Aucune tache  avec un delai de 3 jours ou moins . ");
     }else{
-        printf("\n\t\t\t\t#########################################\n");
-        printf("\n\t\t\t\t\tTaches avec Echeance dans 3 Jours ou Moins\n");
-        printf("\n\t\t\t\t#########################################\n");
+        printf("\n\t\t\t\t###########################################\n");
+        printf("\n\t\t\t\tTaches avec Echeance dans 3 Jours ou Moins\n");
+        printf("\n\t\t\t\t###########################################\n");
         printf("\n\t\t--------------------------------------------------------------\n\t\tId\tTitre\tDesc\t\tdeadline\tStatus\n\t\t--------------------------------------------------------------");
 
     struct tm deadlineDate;
@@ -500,7 +500,7 @@ int main() {
 
         switch (choice) {
             case 1:
-                printf("\n[1] : pour une seul tache!\n[2] : pour plusieur taches !\n");
+                printf("\n[1] : pour une seul tache!\n[2] : pour plusieur taches !\n[0] : Pour revenir au menu principal\n");
                 scanf("%d",&taskToAdd);
                 switch (taskToAdd)
                 {
@@ -511,6 +511,8 @@ int main() {
 
                     addTask(&task, &nbrTaches); // Pass task and nbrTaches as pointers
 
+                    break;
+                case 0:
                     break;
 
                 default:
@@ -535,9 +537,11 @@ int main() {
                 }
                 break;
             case 6:
-                printf("1 => Modifier la description.\n2 => Modifier le statut\n3 => Modifier le deadline.\n");
+                printf("[1] : Modifier la description.\n[2] : Modifier le statut\n[3] : Modifier le deadline.\n[0] : Pour revenir au menu principal\n");
                 scanf("%d", &choixMod);
                 switch (choixMod) {
+                    case 0 :
+                        break;
                     case 1:
                         if (nbrTaches < 1){
                             printf("there no task to update");
@@ -617,9 +621,11 @@ int main() {
 
                 break;
             case 8:
-                printf("1 => Rechercher par ID.\n2 => Rechercher par Titre.\n");
+                printf("[1] : Rechercher par ID.\n[2] : Rechercher par Titre.\n[0] : Pour revenir au menu principal\n");
                 scanf("%d", &choixSearch);
                 switch (choixSearch) {
+                    case 0 :
+                        break;
                     case 1:
                         printf("entre ID du tache que vous voullez trouver : \n");
                         scanf("%d", &id);
@@ -636,9 +642,11 @@ int main() {
                 }
                 break;
             case 9:
-                printf("1 => Afficher le nombre total des taches.\n2 => Afficher le nombre de taches completes et incompletes.\n3 => Afficher le nombre de jours restants jusqu au delai de chaque tache.\n");
+                printf("[1] : Afficher le nombre total des taches.\n[2] : Afficher le nombre de taches completes et incompletes.\n[3] : Afficher le nombre de jours restants jusqu au delai de chaque tache.\n[0] : Pour revenir au menu principal\n");
                 scanf("%d", &choixSearch);
                 switch (choixSearch) {
+                    case 0 :
+                        break;
                     case 1:
                         nbrTotal(task);
                         break;
