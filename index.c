@@ -416,25 +416,25 @@ void addOneTask(tache **task, int *nbrTaches) {
     }
 
     if (status == 1) {
-        printf("added as To Do !");
+        printf("Ajoute aux taches a faire !");
     } else if (status == 2) {
-        printf("added as Doing");
+        printf("Ajoute aux taches en cours");
     } else if (status == 3) {
-        printf("added as Done !");
+        printf("Ajoute aux taches en realisees !");
     }
 
     printf("\n------------------------------------------\n");
 
-    (*nbrTaches)++; // Update the total number of tasks
+    (*nbrTaches)++;
     start = countID;
 }
 
 //Ajouter multi tâche
 void addTask(tache **task, int *nbrTaches) {
     int status;
-    int numTasksToAdd; // Declare a variable to store the number of tasks to add
+    int numTasksToAdd;
     printf("Saisir le nombre de taches a ajouter : ");
-    scanf("%d", &numTasksToAdd); // Read the number of tasks to add
+    scanf("%d", &numTasksToAdd);
 
     // Reallocate memory for the tasks
     *task = (tache *)realloc(*task, (*nbrTaches + numTasksToAdd) * sizeof(tache));
@@ -510,7 +510,7 @@ int main() {
                     break;
                 case 2:
 
-                    addTask(&task, &nbrTaches); // Pass task and nbrTaches as pointers
+                    addTask(&task, &nbrTaches);
 
                     break;
                 case 0:
@@ -670,7 +670,7 @@ int main() {
 
     } while (choice != 0);
 
-    free(task); // Free the dynamically allocated memory
+    free(task);
 
     return 0;
 }
