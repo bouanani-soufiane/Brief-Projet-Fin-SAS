@@ -31,6 +31,8 @@ typedef struct tache {
     char statut[30];
     int idCollab[100];
 } tache;
+tache *task = NULL; // Declare task as a pointer
+
 // menue function
 void menue (){
         printf("\n\t\t\t\t#################################################\n");
@@ -47,7 +49,7 @@ void menue (){
         printf("\n\t\t\t\t#################################################\n");
 }
 // function for display list of tasks
-void displayTasks(tache *task, int nbrTaches) {
+void displayTasks() {
     if (nbrTaches < 1 ){
         printf("there is no tasks to display");
     }else{
@@ -62,7 +64,7 @@ void displayTasks(tache *task, int nbrTaches) {
     }
 }
 // sort alpha
-void sortAlpha (tache task[]){
+void sortAlpha (){
     tache temp;
     int i,j,compar;
     for (i = 0; i < nbrTaches ; i++) {
@@ -78,7 +80,7 @@ void sortAlpha (tache task[]){
     printf("\nLes taches sont triees dans l ordre alphabetique\n");
 }
 // sort deadline
-void sortDeadline(tache task[] ) {
+void sortDeadline() {
     tache temp;
     for (i = 0; i < nbrTaches - 1; i++) {
         for (j = 0; j < nbrTaches - i - 1; j++) {
@@ -104,7 +106,7 @@ void sortDeadline(tache task[] ) {
 
 }
 //Afficher les tâches dont le deadline est dans 3 jours ou moins.
-void deadline3Jours(tache task[], int nbrTaches) {
+void deadline3Jours() {
 
     if(nbrTaches < 1){
         printf("Aucune tache  avec un delai de 3 jours ou moins . ");
@@ -140,7 +142,7 @@ void deadline3Jours(tache task[], int nbrTaches) {
 
 
 // modifier description
-void modifierDesc(tache task[],int id, char desc[]){
+void modifierDesc(int id, char desc[]){
     int found = 0;
     for (i = 0; i < nbrTaches; i++) {
         if ( task[i].id == id) {
@@ -157,7 +159,7 @@ void modifierDesc(tache task[],int id, char desc[]){
 
 }
 // modifier status
-void modifierStatus(tache task[], int id, int status) {
+void modifierStatus(int id, int status) {
     int found = 0;
 
     for (i = 0; i < nbrTaches; i++) {
@@ -196,7 +198,7 @@ void modifierStatus(tache task[], int id, int status) {
 }
 
 
-void modifierDeadline(tache task[], int id, Date newDeadline) {
+void modifierDeadline(int id, Date newDeadline) {
     int found = 0;
 
     for (int i = 0; i < nbrTaches; i++) {
@@ -214,7 +216,7 @@ void modifierDeadline(tache task[], int id, Date newDeadline) {
 }
 
 // delete tache
-void supprimerTask(tache task[],int id){
+void supprimerTask(int id){
     int found = 0;
 
     for (i = 0; i < nbrTaches; i++) {
@@ -235,7 +237,7 @@ void supprimerTask(tache task[],int id){
 
 }
 // Search by id
-void searchById(tache task[],int id){
+void searchById(int id){
     int found = 0;
 
     for (i = 0; i < nbrTaches; i++) {
@@ -253,7 +255,7 @@ void searchById(tache task[],int id){
 
 }
 // Search by titre
-void searchByTitre(tache task[],char titre[]){
+void searchByTitre(char titre[]){
     int found = 0;
 
     for (i = 0; i < nbrTaches; i++) {
@@ -271,7 +273,7 @@ void searchByTitre(tache task[],char titre[]){
 
 }
 // display nombre total des taches
-void nbrTotal(tache task[]){
+void nbrTotal(){
     int counter = 0 ;
     for (i = 0; i < nbrTaches; i++) {
       counter ++;
@@ -281,7 +283,7 @@ void nbrTotal(tache task[]){
 
 }
 // display nombre total des taches complètes et incomplètes
-void nbrTotalCompleteIncomplete(tache task[]){
+void nbrTotalCompleteIncomplete(){
     int counterDone = 0 ;
     int counterTodo = 0 ;
     char statusDone[] = "done";
@@ -322,7 +324,7 @@ int daysRemaining(Date deadline) {
     return remainingDays;
 }
 // Function to display the number of days remaining for each task
-void displayDaysRemaining(tache *task, int nbrTaches) {
+void displayDaysRemaining() {
     time_t now;
     struct tm *tm_info;
     time(&now);
@@ -490,7 +492,6 @@ void addTask(tache **task, int *nbrTaches) {
 int main() {
     int choixMod, choixSearch, id, deadline, modifStatus,taskToAdd , choice = -1; // Initialize choice to -1
     char desc[100], status[30], titre[30], suppId;
-    tache *task = NULL; // Declare task as a pointer
 
     do {
         menue();
@@ -554,7 +555,7 @@ int main() {
                                 printf("entre la nouvelle description : \n");
                                 getchar();
                                 gets(desc);
-                                modifierDesc(task, id, desc);
+                                modifierDesc(id, desc);
                             }else{
                                 printf("modification annulee !! \n");
                             }
@@ -572,7 +573,7 @@ int main() {
                         if(suppId == 'O' || suppId == 'o'){
                             printf("choisi le statut de la tache  : \n[1] : To Do\n[2] : Doing\n[3] : Done\n");
                             scanf("%d", &modifStatus);
-                            modifierStatus(task, id, modifStatus);
+                            modifierStatus(id, modifStatus);
                         }else{
                             printf("modification annulee !! \n");
                         }
@@ -600,7 +601,7 @@ int main() {
                             } while (newDeadline.an < 1990 ||
                                     newDeadline.mois < 1 || newDeadline.mois > 12 ||
                                     newDeadline.jour < 1 || newDeadline.jour > 31);
-                        modifierDeadline(task, id, newDeadline);
+                        modifierDeadline(id, newDeadline);
                         } else {
                             printf("Modification annulée !! \n");
                         }
@@ -614,7 +615,7 @@ int main() {
                 printf("voullez vous vraiment supprimer la tache ID [%d] (O/N) : \n", id);
                 scanf(" %c", &suppId);
                 if(suppId == 'O' || suppId == 'o'){
-                    supprimerTask(task, id);
+                    supprimerTask(id);
                 }else{
                     printf("suppression annulee !! \n");
                 }
@@ -629,13 +630,13 @@ int main() {
                     case 1:
                         printf("entre ID du tache que vous voullez trouver : \n");
                         scanf("%d", &id);
-                        searchById(task, id);
+                        searchById(id);
                         break;
                     case 2:
                         printf("entre le titre du tache que vous voullez trouver : \n");
                         getchar();
                         gets(titre);
-                        searchByTitre(task, titre);
+                        searchByTitre(titre);
                         break;
                     default:
                         printf("Choix invalide. Veuillez réessayer.\n");
