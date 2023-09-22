@@ -51,9 +51,13 @@ void displayTasks(tache *task, int nbrTaches) {
     if (nbrTaches < 1 ){
         printf("there is no tasks to display");
     }else{
-        printf("--------------------------------------------------------------\nId\tTitre\tDesc\t\tdeadline\tStatus\n--------------------------------------------------------------");
+        printf("\n\t\t\t\t#########################\n");
+        printf("\n\t\t\t\t\tTO DO LIST\n");
+        printf("\n\t\t\t\t#########################\n");
+
+        printf("\n\t\t--------------------------------------------------------------\n\t\tId\tTitre\tDesc\t\tdeadline\tStatus\n\t\t--------------------------------------------------------------");
         for(i = 0; i < nbrTaches; i++){
-            printf("\n%d\t%s\t%s\t\\%d\\%d\\%d\t%s\n--------------------------------------------------------------",task[i].id,task[i].titre,task[i].description, task[i].deadline.an, task[i].deadline.mois, task[i].deadline.jour,task[i].statut);
+            printf("\n\n\t\t%d\t%s\t%s\t\\%d\\%d\\%d\t%s\n\t\t--------------------------------------------------------------",task[i].id,task[i].titre,task[i].description, task[i].deadline.an, task[i].deadline.mois, task[i].deadline.jour,task[i].statut);
         }
     }
 }
@@ -71,7 +75,7 @@ void sortAlpha (tache task[]){
             }
         }
     }
-    printf("SORTED");
+    printf("\nLes taches sont triees dans l ordre alphabetique\n");
 }
 // sort deadline
 void sortDeadline(tache task[] ) {
@@ -96,10 +100,19 @@ void sortDeadline(tache task[] ) {
             }
         }
     }
+    printf("\nLes taches sont triees avec succes par ordre de deadline\n");
+
 }
 //Afficher les tâches dont le deadline est dans 3 jours ou moins.
 void deadline3Jours(tache task[], int nbrTaches) {
-    printf("--------------------------------------------------------------\nId\tTitre\tDesc\t\tdeadline\tStatus\n--------------------------------------------------------------");
+
+    if(nbrTaches < 1){
+        printf("Aucune tache  avec un delai de 3 jours ou moins . ");
+    }else{
+        printf("\n\t\t\t\t#########################################\n");
+        printf("\n\t\t\t\t\tTaches avec Echeance dans 3 Jours ou Moins\n");
+        printf("\n\t\t\t\t#########################################\n");
+        printf("\n\t\t--------------------------------------------------------------\n\t\tId\tTitre\tDesc\t\tdeadline\tStatus\n\t\t--------------------------------------------------------------");
 
     struct tm deadlineDate;
 
@@ -119,8 +132,9 @@ void deadline3Jours(tache task[], int nbrTaches) {
 
         // Check if the deadline is within 3 days (259200 seconds)
         if (diffInSeconds >= 0 && diffInSeconds <= 259200) {
-            printf("\n%d\t%s\t%s\t%d/%d/%d\t%s\n--------------------------------------------------------------", task[i].id, task[i].titre, task[i].description, task[i].deadline.an, task[i].deadline.mois, task[i].deadline.jour, task[i].statut);
+            printf("\n\n\t\t%d\t%s\t%s\t%d/%d/%d\t%s\n\n\t\t--------------------------------------------------------------", task[i].id, task[i].titre, task[i].description, task[i].deadline.an, task[i].deadline.mois, task[i].deadline.jour, task[i].statut);
         }
+    }
     }
 }
 
@@ -135,8 +149,10 @@ void modifierDesc(tache task[],int id, char desc[]){
             break;
         }
     }
+    printf("La tache a ete modifier avec succes !\n");
+
     if (!found) {
-        printf("Aucun tache trouvé pour modifier.\n");
+        printf("Aucun tache trouve pour modifier.\n");
     }
 
 }
@@ -172,9 +188,10 @@ void modifierStatus(tache task[], int id, int status) {
             }
         }
     }
+    printf("La tache a ete modifier avec succes !\n");
 
     if (!found) {
-        printf("Aucune tâche trouvée pour modifier.\n");
+        printf("Aucune tache trouvee pour modifier.\n");
     }
 }
 
@@ -189,9 +206,10 @@ void modifierDeadline(tache task[], int id, Date newDeadline) {
             break;
         }
     }
+    printf("La tache a ete modifier avec succes !\n");
 
     if (!found) {
-        printf("Aucun tache trouvé pour modifier la deadline.\n");
+        printf("Aucun tache trouve pour modifier la deadline.\n");
     }
 }
 
@@ -209,6 +227,7 @@ void supprimerTask(tache task[],int id){
             break;
         }
     }
+    printf("La tache a ete supprimee avec succes  \n");
 
     if (!found) {
         printf("Aucun tache trouve pour supprimer.\n");
@@ -221,8 +240,8 @@ void searchById(tache task[],int id){
 
     for (i = 0; i < nbrTaches; i++) {
         if ( task[i].id == id) {
-        printf("--------------------------------------------------------------\nId\tTitre\tDesc\t\tdeadline\tStatus\n-----------------------------------------");
-        printf("\n%d\t%s\t%s\t\\%d\\%d\\%d\t%s\n--------------------------------------------------------------",task[i].id,task[i].titre,task[i].description, task[i].deadline.an, task[i].deadline.mois, task[i].deadline.jour,task[i].statut);
+        printf("\n\t\t--------------------------------------------------------------\n\t\tId\tTitre\tDesc\t\tdeadline\tStatus\n\t\t--------------------------------------------------------------");
+        printf("\n\t\t%d\t%s\t%s\t\\%d\\%d\\%d\t%s\n\t\t--------------------------------------------------------------",task[i].id,task[i].titre,task[i].description, task[i].deadline.an, task[i].deadline.mois, task[i].deadline.jour,task[i].statut);
             found = 1;
             break;
         }
@@ -239,15 +258,15 @@ void searchByTitre(tache task[],char titre[]){
 
     for (i = 0; i < nbrTaches; i++) {
         if (strcmp(titre, task[i].titre) == 0) {
-        printf("--------------------------------------------------------------\nId\tTitre\tDesc\t\tdeadline\tStatus\n-----------------------------------------");
-        printf("\n%d\t%s\t%s\t\\%d\\%d\\%d\t%s\n--------------------------------------------------------------",task[i].id,task[i].titre,task[i].description, task[i].deadline.an, task[i].deadline.mois, task[i].deadline.jour,task[i].statut);
-            found = 1;
+        printf("\n\t\t--------------------------------------------------------------\n\t\tId\tTitre\tDesc\t\tdeadline\tStatus\n\t\t--------------------------------------------------------------");
+        printf("\n\t\t%d\t%s\t%s\t\\%d\\%d\\%d\t%s\n\t\t--------------------------------------------------------------",task[i].id,task[i].titre,task[i].description, task[i].deadline.an, task[i].deadline.mois, task[i].deadline.jour,task[i].statut);
+        found = 1;
             break;
         }
     }
 
     if (!found) {
-        printf("Aucun tache trouve.\n");
+        printf("Aucun tache trouve \n");
     }
 
 }
@@ -258,7 +277,7 @@ void nbrTotal(tache task[]){
       counter ++;
     }
 
-    printf("Nombre total des taches est %d \n", counter);
+    printf("\t\tNombre total des taches est %d \n", counter);
 
 }
 // display nombre total des taches complètes et incomplètes
@@ -279,8 +298,8 @@ void nbrTotalCompleteIncomplete(tache task[]){
 
     }
 
-    printf("Nombre total des taches completes est %d \n", counterDone);
-    printf("Nombre total des taches incompletes est %d \n", counterTodo);
+    printf("\t\tNombre total des taches completes est %d \n", counterDone);
+    printf("\t\tNombre total des taches incompletes est %d \n", counterTodo);
 
 }
 
@@ -304,7 +323,7 @@ int daysRemaining(Date deadline) {
 }
 // Function to display the number of days remaining for each task
 void displayDaysRemaining(tache *task, int nbrTaches) {
-     time_t now;
+    time_t now;
     struct tm *tm_info;
     time(&now);
     tm_info = localtime(&now);
@@ -313,25 +332,32 @@ void displayDaysRemaining(tache *task, int nbrTaches) {
     int currentYear = tm_info->tm_year + 1900;
     int currentMonth = tm_info->tm_mon + 1;
     int currentDay = tm_info->tm_mday;
-    if(nbrTaches < 1){
-        printf("there is no task to dispaly");
-    }else{
-        printf("--------------------------------------------------------------\nId\tTitre\tToday's Date\tDeadline\tDays Remaining\n--------------------------------------------------------------");
+
+    if (nbrTaches < 1) {
+        printf("\n\t\t##Il n'y a aucune tache a afficher . \n");
+    } else {
+        printf("\n\t\t--------------------------------------------------------------\n\t\tId\tTitre\tDate d'aujourd'hui\tDeadline\tJours restants\n\t\t--------------------------------------------------------------");
         for (int i = 0; i < nbrTaches; i++) {
             Date todayDate;
             todayDate.an = currentYear;
             todayDate.mois = currentMonth;
             todayDate.jour = currentDay;
 
-            printf("\n%d\t%s\t%d/%d/%d\t%d/%d/%d\t%d\n--------------------------------------------------------------",
-                task[i].id, task[i].titre,
-                todayDate.jour, todayDate.mois, todayDate.an, // Today's Date
-                task[i].deadline.jour, task[i].deadline.mois, task[i].deadline.an, // Deadline
-                daysRemaining(task[i].deadline)
-            );
+            int daysLeft = daysRemaining(task[i].deadline);
+
+            printf("\n\t\t%d\t%s\t%d/%d/%d\t%d/%d/%d\t", task[i].id, task[i].titre,
+                   todayDate.jour, todayDate.mois, todayDate.an, // Today's Date
+                   task[i].deadline.jour, task[i].deadline.mois, task[i].deadline.an); // Deadline
+
+            if (daysLeft < 0) {
+                printf("%d jours (Tache depassee)\n\t\t--------------------------------------------------------------", daysLeft);
+            } else {
+                printf("%d jours \n\t\t--------------------------------------------------------------", daysLeft);
+            }
         }
     }
 }
+
 
 
 //Ajouter une nouvelle tâche
